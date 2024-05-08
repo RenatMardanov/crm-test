@@ -1,100 +1,89 @@
-import {
-    Box,
-    Button,
-    Collapse,
-    FormControl,
-    FormErrorMessage,
-    FormLabel,
-    Input,
-    InputGroup,
-    InputRightElement,
-} from "@chakra-ui/react";
-import { FC, useState } from "react";
-import { IRegistrationForm } from "../../types/types";
-import { SubmitHandler, useForm } from "react-hook-form";
+import { FC } from "react";
 import { useUserStore } from "../../store/store";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { IRegistrationForm } from "../../types/types";
+import { Button, Form, Input } from "antd";
+import { LockOutlined, UserOutlined } from "@ant-design/icons";
+import { FormItem } from "react-hook-form-antd";
 
-export const RegistrationForm: FC = () => {
-    const [show, setShow] = useState(false);
-    const handleShow = () => setShow(!show);
-    const { user, registration } = useUserStore();
+export const LoginForm: FC = () => {
+    // const [show, setShow] = useState(false);
+    const { user, login } = useUserStore();
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const fromPage = location.state?.from?.pathname || "/";
 
     const {
-        register,
+        control,
         handleSubmit,
-        formState: { errors, isSubmitting },
+        // formState: { errors, isSubmitting },
     } = useForm<IRegistrationForm>({ mode: "all" });
 
-    const onSubmit: SubmitHandler<IRegistrationForm> = async (data) => {
-        await registration(data.email, data.password);
-        console.log(user);
-    };
+    // const handleShow = () => setShow(!show);
+    // const onSubmit: SubmitHandler<IRegistrationForm> = async (data) => {
+    //     await login(data.email, data.password);
+    //     console.log(user);
+    //     navigate(fromPage || "/");
+    // };
 
     return (
-        <Box as="form" onSubmit={handleSubmit(onSubmit)} w="md" p="4" pb={10}>
-            <p>reg</p>
-            <FormControl isInvalid={errors.email ? true : false} pb={5}>
-                <FormLabel>Email address</FormLabel>
-                <Input
-                    type="email"
-                    errorBorderColor="red.300"
-                    placeholder="Email"
-                    {...register("email", {
-                        required: "Пожалуйста, введите email",
-                        minLength: {
-                            value: 5,
-                            message: "Email должен быть не менее 5 символов",
-                        },
-                        pattern: {
-                            value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                            message: "Некорректный email",
-                        },
-                    })}
-                />
-                <Collapse
-                    in={errors.email ? true : false}
-                    animateOpacity
-                    transition={{
-                        enter: { duration: 0.8, delay: 0.5 },
-                        exit: { delay: 0.5, duration: 0.8 },
-                    }}
-                >
-                    <FormErrorMessage>{errors.email && errors.email.message}</FormErrorMessage>
-                </Collapse>
-            </FormControl>
-            <FormControl>
-                <FormLabel>Password</FormLabel>
-                <InputGroup size="md">
-                    <Input
-                        type={show ? "text" : "password"}
-                        errorBorderColor="red.300"
-                        placeholder="*********"
-                        {...register("password", {
-                            required: "Пожалуйста, введите пароль",
-                            minLength: {
-                                value: 6,
-                                message: "Пароль должен быть не менее 6 символов",
-                            },
-                        })}
-                    />
-                    <InputRightElement width="6rem">
-                        <Button h="1.75rem" size="sm" onClick={handleShow}>
-                            {show ? "Скрыть" : "Показать"}
-                        </Button>
-                    </InputRightElement>
-                </InputGroup>
-                <FormErrorMessage>{errors.password && errors.password.message}</FormErrorMessage>
-            </FormControl>
-            <Button
-                mt={4}
-                colorScheme="blue"
-                isLoading={isSubmitting}
-                type="submit"
-                variant={"outline"}
-                w="full"
+        <Form
+            name="normal_login"
+            className="login-form"
+            initialValues={{ remember: true }}
+            onFinish={handleSubmit(async (data) => {
+                await login(data.email, data.password);
+                console.log(user);
+                navigate(fromPage || "/");
+            })}
+        >
+            <FormItem
+                control={control}
+                name="email"
+                // {...register("email", {
+                //     required: "Пожалуйста, введите email",
+                //     minLength: {
+                //         value: 5,
+                //         message: "Email должен быть не менее 5 символов",
+                //     },
+                //     pattern: {
+                //         value: /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
+                //         message: "Некорректный email",
+                //     },
+                // })}
             >
-                Register
-            </Button>
-        </Box>
+                <Input
+                    prefix={<UserOutlined className="site-form-item-icon" />}
+                    placeholder="Username"
+                />
+            </FormItem>
+            <FormItem
+                control={control}
+                name="password"
+
+                // {...register("password", {
+                //     required: "Пожалуйста, введите пароль",
+                //     minLength: {
+                //         value: 6,
+                //         message: "Пароль должен быть не менее 6 символов",
+                //     },
+                // })}
+            >
+                <Input
+                    prefix={<LockOutlined className="site-form-item-icon" />}
+                    type="password"
+                    placeholder="Password"
+                />
+            </FormItem>
+
+            <div>
+                <Button type="primary" htmlType="submit" className="login-form-button">
+                    Log in
+                </Button>
+                Or <a href="">register now!</a>
+            </div>
+        </Form>
     );
 };
