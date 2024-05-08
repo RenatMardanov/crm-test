@@ -21,13 +21,6 @@ export const LoginForm: FC = () => {
         // formState: { errors, isSubmitting },
     } = useForm<IRegistrationForm>({ mode: "all" });
 
-    // const handleShow = () => setShow(!show);
-    // const onSubmit: SubmitHandler<IRegistrationForm> = async (data) => {
-    //     await login(data.email, data.password);
-    //     console.log(user);
-    //     navigate(fromPage || "/");
-    // };
-
     return (
         <Form
             name="normal_login"
