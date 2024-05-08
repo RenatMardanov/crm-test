@@ -19,7 +19,7 @@ export const AddUpdateArticleForm: FC<IAddUpdateArticleForm> = ({ data: oldData 
         queryFn: () => productService.getProductById(id!),
     });
 
-    console.log(oldData, "dddddddddddddddddddddddddddd");
+    console.log(oldData, "ddddddddddddddddddddddd");
 
     const { control, handleSubmit } = useForm<IProduct>({
         defaultValues: {
